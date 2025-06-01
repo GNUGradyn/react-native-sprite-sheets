@@ -1,0 +1,17 @@
+{
+  "cxxNamespace": ["spritesheets"],
+  "ios": {
+    "iosModuleName": "SpriteSheets"
+  },
+  "android": {
+    "androidNamespace": ["spritesheets"],
+    "androidCxxLibName": "spritesheets"
+  },
+  "autolinking": {
+    "SpriteSheets": {
+      "swift": "SpriteSheets",
+      "kotlin": "SpriteSheets"
+    }
+  },
+  "ignorePaths": ["node_modules"]
+}
