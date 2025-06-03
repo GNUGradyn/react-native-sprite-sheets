@@ -4,7 +4,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 
 @DoNotStrip
 class SpriteSheets : HybridSpriteSheetsSpec() {
-  override fun multiply(a: Double, b: Double): Double {
-    return a * b
-  }
+  // override fun multiply(a: Double, b: Double): Double {
+  //   return a * b
+  // }
 }

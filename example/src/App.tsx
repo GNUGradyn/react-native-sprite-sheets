@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet } from 'react-native';
-import { multiply } from 'react-native-sprite-sheets';
+// import { multiply } from 'react-native-sprite-sheets';
 
 const result = multiply(3, 7);
 
