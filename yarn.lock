@@ -11002,6 +11002,8 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-nitro-modules: ^0.25.2
+  bin:
+    rnsprite: src/cli/cmd.js
   languageName: unknown
   linkType: soft
 

@@ -12,6 +12,9 @@
     },
     "./package.json": "./package.json"
   },
+  "bin": {
+    "rnsprite": "src/cli/cmd.js"
+  },
   "files": [
     "src",
     "lib",
