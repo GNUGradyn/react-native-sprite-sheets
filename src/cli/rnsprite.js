@@ -62,6 +62,16 @@ where () is mandatory, [] is optional, paths are relative to project root, and o
         jobs[spriteSheetDirInputName + ".png"] = filesInSheetPaths;
     }
 
+    const existingOutFiles = fs.readdirSync(out);
+    if (existingOutFiles.length > 0) {
+        if (existingOutFiles.some(file => !file.endsWith(".png") && !file.endsWith(".json"))) {
+            console.error("FAIL: output directory contains files that are not images or JSON. Refusing to clean up automatically. Try deleting the output directory contents manually");
+            process.exit(1);
+        }
+        console.log("Output directory not clean. Cleaning");
+        existingOutFiles.forEach(existingOutFile => fs.rmSync(path.join(out, existingOutFile)));
+    }
+
     for (let i = 0; i < Object.keys(jobs).length; i++) {
         let jobkey = Object.keys(jobs)[i];
         let job = jobs[jobkey];

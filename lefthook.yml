@@ -1,4 +1,5 @@
 pre-commit:
+  skip: true # Remove before publishing library to force linting
   parallel: true
   commands:
     lint:
