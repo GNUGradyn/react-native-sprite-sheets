@@ -4,7 +4,6 @@ const Spritesmith = require('spritesmith');
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-const { exec } = require('child_process');
 const runSpritesmith = util.promisify(Spritesmith.run);
 
 const executeJob = async (job, jobkey) => {
@@ -17,7 +16,10 @@ const executeJob = async (job, jobkey) => {
 
     targets.forEach(target => {
         fs.writeFileSync(path.join(target, "rnsprite", jobkey), result.image);
-        fs.writeFileSync(path.join(target, "rnsprite", jobkey) + ".json", JSON.stringify(result.coordinates));
+        let patchedCoordinateMap = Object.fromEntries(
+            Object.entries(result.coordinates).map(([key, arr]) => [path.basename(key), arr])
+        );
+        fs.writeFileSync(path.join(target, "rnsprite", jobkey) + ".json", JSON.stringify(patchedCoordinateMap));
     });
 }
 
