@@ -10996,6 +10996,7 @@ __metadata:
     react-native-nitro-modules: ^0.25.2
     release-it: ^17.10.0
     spritesmith: ^3.5.1
+    tsc: ^2.0.4
     turbo: ^1.10.7
     typescript: ^5.8.3
   peerDependencies:
@@ -12560,6 +12561,15 @@ __metadata:
     "@ts-morph/common": ~0.26.0
     code-block-writer: ^13.0.3
   checksum: 6370c653824ac5d4cc44571cb6b770d7b6e2a6c5d1910e538012f98f4e26c2e5d3f900d9cdd3c9f65301415e2cb4cd263774de97ec153ea99f4d9ce4b0a1dd37
+  languageName: node
+  linkType: hard
+
+"tsc@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "tsc@npm:2.0.4"
+  bin:
+    tsc: bin/tsc
+  checksum: 50b10240887424c66454687f0fca4e319713b35cb44f0dab228719eb4dd757251f83c3d79e60d29dfbe90c2d6f1272f793b83e75a9fca2c622b4213ad3eb8cb1
   languageName: node
   linkType: hard
 

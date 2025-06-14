@@ -1,5 +1,5 @@
-import { Text, View, StyleSheet } from 'react-native';
-// import { multiply } from 'react-native-sprite-sheets';
+import { StyleSheet, SafeAreaView } from 'react-native';
+import { createSpritesheet } from 'react-native-sprite-sheets';
 
 const styles = StyleSheet.create({
   container: {
@@ -11,9 +11,12 @@ const styles = StyleSheet.create({
 
 
 const App = () => {
+  const TwemojiSprite = createSpritesheet('twemoji');
+  
   return (
-    <View style={styles.container}>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <TwemojiSprite icon="1f0cf.png"/>
+    </SafeAreaView>
   );
 }
 

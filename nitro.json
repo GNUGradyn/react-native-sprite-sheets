@@ -8,9 +8,9 @@
     "androidCxxLibName": "spritesheets"
   },
   "autolinking": {
-    "SpriteSheets": {
-      "swift": "SpriteSheets",
-      "kotlin": "SpriteSheets"
+    "SpriteView": {
+      "kotlin": "SpriteViewManager",
+      "swift": "HybridSpriteView" 
     }
   },
   "ignorePaths": ["node_modules"]
