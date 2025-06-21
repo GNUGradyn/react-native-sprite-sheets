@@ -3,102 +3,99 @@
 const Spritesmith = require('spritesmith');
 const fs = require('fs');
 const path = require('path');
-const util = require('util');
-const runSpritesmith = util.promisify(Spritesmith.run);
+const events = require('events');
+const { promisify } = require('util');
 
-const executeJob = async (job, jobkey) => {
-    const result = await runSpritesmith({ src: job });
+const spritesmith = new Spritesmith();
+const createImagesAsync = promisify(spritesmith.createImages.bind(spritesmith));
 
-    if (result.err) {
-        console.error(err);
-        process.exit(2);
-    }
-
-    targets.forEach(target => {
-        fs.writeFileSync(path.join(target, "rnsprite", jobkey), result.image);
-        let patchedCoordinateMap = Object.fromEntries(
-            Object.entries(result.coordinates).map(([key, arr]) => [path.basename(key), arr])
-        );
-        fs.writeFileSync(path.join(target, "rnsprite", jobkey) + ".json", JSON.stringify(patchedCoordinateMap));
+const writeStream = (istream, path, opts = {}) => {
+    return new Promise(async (resolve, reject) => {
+        const ostream = fs.createWriteStream(path, opts);
+        istream.pipe(ostream);
+        ostream.on('error', reject);
+        istream.on('error', reject);
+        await events.once(ostream, 'finish');
+        resolve();
     });
-}
+};
 
-if (process.argv.length != 3) {
-    console.error(
-        `FAIL: Your react-native-sprite-sheets script line in package.json is invalid. It should be:
-node ./node_modules/react-native-sprite-sheets/cmd.js path-to-sprites-directory`);
-    process.exit(1);
-}
 
-const src = process.argv[2];
-
-if (!fs.existsSync(src)) {
-    console.error("FAIL: source directory does not exist. Check your react-native-sprite-sheets script line in package.json");
-    process.exit(1);
-}
-
-if (fs.readdirSync(src).length == 0) {
-    console.error("FAIL: no icons to compile");
-    process.exit(1);
-}
-
-let jobs = {};
-
-// Validate everything and split into jobs
-for (let spriteSheetDirInputName of fs.readdirSync(src)) {
-    let spriteSheetDirInputPath = path.join(src, spriteSheetDirInputName);
-    if (!fs.statSync(spriteSheetDirInputPath).isDirectory) {
-        console.error(`FAIL: sprite sheet ${spriteSheetDirInputPath} is not a directory`);
+const main = async () => {
+    if (process.argv.length != 4) {
+        console.error(
+            `FAIL: Your react-native-sprite-sheets script line in package.json is invalid. It should be:
+rnsprite (source path) (output path) as described in the docs`);
         process.exit(1);
     }
 
-    let filesInSheetNames = fs.readdirSync(spriteSheetDirInputPath);
-    let filesInSheetPaths = filesInSheetNames.map(fileInSheetName => path.join(spriteSheetDirInputPath, fileInSheetName));
+    const src = process.argv[2];
+    const out = process.argv[3];
 
-    if (filesInSheetPaths.some(fileInSheetPath => fs.statSync(fileInSheetPath).isDirectory())) {
-        console.error("FAIL: sprite sheet " + spriteSheetDirInputName + " contains directories");
+    if (!fs.existsSync(src)) {
+        console.error("FAIL: source directory does not exist. Check your react-native-sprite-sheets script line in package.json");
         process.exit(1);
     }
 
-    jobs[spriteSheetDirInputName + ".png"] = filesInSheetPaths;
-}
+    if (fs.readdirSync(src).length == 0) {
+        console.error("FAIL: no icons to compile");
+        process.exit(1);
+    }
 
-const targets = [];
+    let jobs = {};
 
-if (fs.existsSync("android")) {
-    const androidPath = path.join("android", "app", "src", "main", "assets");
-    if (!fs.existsSync(androidPath)) fs.mkdirSync(androidPath);
-    targets.push(androidPath);
-}
-if (fs.existsSync("ios")) targets.push("ios");
-if (fs.existsSync("web")) console.error("WEB IS NOT YET SUPPORTED! It will be skipped as a build target");
-if (fs.length == 0) {
-    console.error("FAIL: No supported targets");
-    process.exit(1);
-}
+    // Validate everything and split into jobs
+    for (let spriteSheetDirInputName of fs.readdirSync(src)) {
+        let spriteSheetDirInputPath = path.join(src, spriteSheetDirInputName);
+        if (!fs.statSync(spriteSheetDirInputPath).isDirectory) {
+            console.error(`FAIL: sprite sheet ${spriteSheetDirInputPath} is not a directory`);
+            process.exit(1);
+        }
 
-for (let target of targets) {
-    let targetWorkDir = path.join(target, "rnsprite");
-    if (fs.existsSync(targetWorkDir)) fs.rmSync(targetWorkDir, { recursive: true });
-    fs.mkdirSync(targetWorkDir);
-    fs.writeFileSync(path.join(targetWorkDir, "README.txt"),
+        let filesInSheetNames = fs.readdirSync(spriteSheetDirInputPath);
+        let filesInSheetPaths = filesInSheetNames.map(fileInSheetName => path.join(spriteSheetDirInputPath, fileInSheetName));
+
+        if (filesInSheetPaths.some(fileInSheetPath => fs.statSync(fileInSheetPath).isDirectory())) {
+            console.error("FAIL: sprite sheet " + spriteSheetDirInputName + " contains directories");
+            process.exit(1);
+        }
+
+        jobs[spriteSheetDirInputName + ".png"] = filesInSheetPaths;
+    }
+
+    if (!fs.existsSync(out)) fs.mkdirSync(out, true);
+
+    const existingOutFiles = fs.readdirSync(out);
+    if (existingOutFiles.length > 0) {
+        if (existingOutFiles.some(file => !file.endsWith(".png") && !file.endsWith(".json") && file != "README.txt")) {
+            console.error("FAIL: output directory contains files that could not have been created by rnsprite. Refusing to clean up automatically. Try deleting the output directory contents manually");
+            process.exit(1);
+        }
+        console.log("Output directory not clean. Cleaning");
+        existingOutFiles.forEach(existingOutFile => fs.rmSync(path.join(out, existingOutFile)));
+    }
+
+    fs.writeFileSync(path.join(out, "README.txt"),
         `This directory is generated automatically by react-native-sprite-sheets.
 Any modifications made to this directory will be overriden next time the sprite sheets are compiled.
 Instead, modify the sprite inputs and rerun your rnsprite:pack script as documented at https://github.com/GNUGradyn/react-native-sprite-sheets`);
+
+    for (let i = 0; i < Object.keys(jobs).length; i++) {
+        const jobkey = Object.keys(jobs)[i];
+        const job = jobs[jobkey];
+
+        console.log(`Processing sprite sheet ${jobkey} (job ${i + 1} of ${Object.keys(jobs).length})`);
+
+        const spriteSheetImgOutputPath = path.join(out, jobkey);
+
+        const images = await createImagesAsync(job);
+        const result = spritesmith.processImages(images);
+
+        await writeStream(result.image, spriteSheetImgOutputPath);
+        fs.writeFileSync(spriteSheetImgOutputPath + ".json", JSON.stringify(result.coordinates), 'utf8');
+    }
+
+    console.log("Spritesheets recompiled");
 }
 
-const promises = [];
-
-for (let i = 0; i < Object.keys(jobs).length; i++) {
-    let jobkey = Object.keys(jobs)[i];
-    let job = jobs[jobkey];
-    console.log(`Queueing job ${jobkey} (job ${i + 1} of ${Object.keys(jobs).length})`);
-
-    promises.push(executeJob(job, jobkey));
-}
-
-// IIFE so we can await Promise.all so we can console.log after
-(async () => {
-    await Promise.all(promises);
-    console.log("Done. Remember to rebuild your native clients");
-})();
+main();
