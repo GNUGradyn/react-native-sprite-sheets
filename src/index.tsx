@@ -41,7 +41,7 @@ export const createSpritesheet = (
 
     return (
       <NativeSprite
-        pack={pack}
+        assetID={pack}
         icon={icon}
         srcX={frame.x}
         srcY={frame.y}

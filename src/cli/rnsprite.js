@@ -92,7 +92,12 @@ Instead, modify the sprite inputs and rerun your rnsprite:pack script as documen
         const result = spritesmith.processImages(images);
 
         await writeStream(result.image, spriteSheetImgOutputPath);
-        fs.writeFileSync(spriteSheetImgOutputPath + ".json", JSON.stringify(result.coordinates), 'utf8');
+
+        const coordinates = Object.fromEntries(
+            Object.entries(result.coordinates)
+                .map(([k, v]) => [path.basename(k), v])
+        );
+        fs.writeFileSync(spriteSheetImgOutputPath + ".json", JSON.stringify(coordinates), 'utf8');
     }
 
     console.log("Spritesheets recompiled");

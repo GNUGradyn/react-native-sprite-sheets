@@ -2,8 +2,7 @@ import { requireNativeComponent } from 'react-native';
 import type { HybridView, HybridViewProps } from 'react-native-nitro-modules';
 
 export interface NativeSpriteProps extends HybridViewProps {
-  pack: string;
-  icon: string;
+  assetID: number;
   width?: number;
   height?: number;
   srcX: number;
@@ -14,6 +13,6 @@ export interface NativeSpriteProps extends HybridViewProps {
 
 export type SpriteView = HybridView<NativeSpriteProps>;
 
-export const NativeSprite = requireNativeComponent<NativeSpriteProps>('Sprite');
+export const NativeSprite = requireNativeComponent<NativeSpriteProps>('NativeSprite');
 
 export default {} as SpriteView;
