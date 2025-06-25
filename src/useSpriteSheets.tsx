@@ -22,17 +22,17 @@ interface SpriteComponentProps {
     height?: number
 }
 
-const useSpriteSheet = (sheetNamme: SheetName) => {
-    if (sheetNamme.endsWith(".png")) sheetNamme = sheetNamme.slice(0, -4);
+const useSpriteSheet = (sheetName: SheetName) => {
+    if (sheetName.endsWith(".png")) sheetName = sheetName.slice(0, -4);
 
-    const asset = spriteSheetAssets[sheetNamme];
+    const asset = spriteSheetAssets[sheetName];
 
-    if (!asset) throw Error("Spritesheet " + sheetNamme + " could not be located. Try recompiling your spritesheets with `yarn rnsprite:pack`");
+    if (!asset) throw Error("Spritesheet " + sheetName + " could not be located. Try recompiling your spritesheets with `yarn rnsprite:pack`");
 
     const sprite: React.FC<SpriteComponentProps> = ({ icon, width, height }: SpriteComponentProps) => {
         const coordinates = asset.map[icon];
 
-        if (!coordinates) throw new Error("Could not find icon " + icon + " in sheet " + sheetNamme + ". Try recommpiling your spritesheets with `yarn rnsprite:pack`");
+        if (!coordinates) throw new Error("Could not find icon " + icon + " in sheet " + sheetName + ". Try recommpiling your spritesheets with `yarn rnsprite:pack`");
 
         return <NativeSprite assetID={asset.image} srcX={coordinates.x} srcY={coordinates.y} srcW={coordinates.width} srcH={coordinates.height} width={width} height={height} />
     }
@@ -42,4 +42,3 @@ const useSpriteSheet = (sheetNamme: SheetName) => {
 }
 
 export default useSpriteSheet;
-
