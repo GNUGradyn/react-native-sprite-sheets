@@ -170,6 +170,7 @@
   },
   "dependencies": {
     "@types/spritesmith": "^3.4.5",
-    "spritesmith": "^3.5.1"
+    "spritesmith": "^3.5.1",
+    "ts-morph": "^26.0.0"
   }
 }

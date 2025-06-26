@@ -13,6 +13,9 @@ export interface NativeSpriteProps extends HybridViewProps {
 
 export type SpriteView = HybridView<NativeSpriteProps>;
 
+/**
+ * DO NOT USE! This is an internal component used for sprite rendering
+ */
 export const NativeSprite = requireNativeComponent<NativeSpriteProps>('NativeSprite');
 
 export default {} as SpriteView;
