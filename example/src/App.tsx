@@ -1,5 +1,5 @@
 import { StyleSheet, SafeAreaView } from 'react-native';
-import { createSpritesheet } from 'react-native-sprite-sheets';
+import useSpriteSheet from './rnsprite/spritesheets/useSpriteSheet';
 
 const styles = StyleSheet.create({
   container: {
@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
 
 
 const App = () => {
-  const TwemojiSprite = createSpritesheet('twemoji');
+  const TwemojiSprite = useSpriteSheet('twemoji');
   
   return (
     <SafeAreaView style={styles.container}>

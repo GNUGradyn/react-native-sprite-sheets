@@ -1,5 +1,4 @@
-import { requireNativeComponent } from 'react-native';
-import type { HybridView, HybridViewProps } from 'react-native-nitro-modules';
+import type { HybridView, HybridViewMethods, HybridViewProps } from 'react-native-nitro-modules';
 
 export interface NativeSpriteProps extends HybridViewProps {
   assetID: number;
@@ -11,11 +10,6 @@ export interface NativeSpriteProps extends HybridViewProps {
   srcH: number;
 }
 
-export type SpriteView = HybridView<NativeSpriteProps>;
+export interface NativeSpriteMethods extends HybridViewMethods { }
 
-/**
- * DO NOT USE! This is an internal component used for sprite rendering
- */
-export const NativeSprite = requireNativeComponent<NativeSpriteProps>('NativeSprite');
-
-export default {} as SpriteView;
+export type NativeSprite = HybridView<NativeSpriteProps, NativeSpriteMethods>;

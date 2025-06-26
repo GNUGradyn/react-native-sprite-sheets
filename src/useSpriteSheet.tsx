@@ -1,7 +1,9 @@
 // This will be copied into the sprite sheet build output and modified by ts-morph
 
 import React from "react";
-import { NativeSprite } from "react-native-sprite-sheets";
+import type { NativeSpriteMethods, NativeSpriteProps } from "./SpriteSheets.nitro";
+import { getHostComponent } from "react-native-nitro-modules";
+import NativeSpriteConfig from "../nitrogen/generated/shared/json/NativeSpriteConfig.json"
 
 export const spriteSheetAssets: Record<string, SpriteSheetAsset> = {
 
@@ -21,6 +23,11 @@ interface SpriteComponentProps {
     width?: number
     height?: number
 }
+
+const NativeSprite = getHostComponent<NativeSpriteProps, NativeSpriteMethods>(
+    "NativeSprite",
+    () => NativeSpriteConfig
+)
 
 const useSpriteSheet = (sheetName: SheetName) => {
     if (sheetName.endsWith(".png")) sheetName = sheetName.slice(0, -4);
