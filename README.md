@@ -37,7 +37,7 @@ First, you need to add some sprites. The directory structure for your inputs is 
 ```
 Whenever one icon from a spritesheet is loaded, all icons in that spritesheet will be loaded in memory. So you want to sort your icons into folders based on where they are likely to be seen together in the application. For example if you have icons for your login screen and separate icons for the home screen, those could be separate spritesheets so the login screen icons arent in memory when logged in and vise versa. The file names can be anything but will be the names you use to reference the icons in your code.
 
-When you have modified the input icons, you need to inform the library so it can recompile your the output spritesheets. You can do this with the package script we added earlier
+When you have modified the input icons, you need to inform the library so it can recompile your the output spritesheets. You can do this with the package script you added earlier
 ```sh
 yarn rnsprite:pack
 ```
