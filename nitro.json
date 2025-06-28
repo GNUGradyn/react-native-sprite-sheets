@@ -4,7 +4,7 @@
     "iosModuleName": "SpriteSheets"
   },
   "android": {
-    "androidNamespace": ["spritesheets"],
+    "androidNamespace": ["rnsprite"],
     "androidCxxLibName": "spritesheets"
   },
   "autolinking": {

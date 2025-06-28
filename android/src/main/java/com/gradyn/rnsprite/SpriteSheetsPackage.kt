@@ -1,4 +1,4 @@
-package com.spritesheets
+package com.margelo.nitro.rnsprite
 
 import com.facebook.react.TurboReactPackage
 import com.facebook.react.bridge.NativeModule

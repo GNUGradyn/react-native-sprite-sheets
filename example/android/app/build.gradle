@@ -77,9 +77,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "spritesheets.example"
+    namespace "com.gradyn.spritesheets.example"
     defaultConfig {
-        applicationId "spritesheets.example"
+        applicationId "com.gradyn.spritesheets.example"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -116,6 +116,4 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    implementation project(':react-native-sprite-sheets')
 }
