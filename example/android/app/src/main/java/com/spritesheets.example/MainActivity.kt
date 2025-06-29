@@ -1,4 +1,4 @@
-package spritesheets.example
+package com.gradyn.spritesheets.example
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

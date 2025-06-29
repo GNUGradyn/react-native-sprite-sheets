@@ -1,6 +1,7 @@
 #include <jni.h>
-#include "spritesheetsOnLoad.hpp"
+
+#include "rnspriteOnLoad.hpp"
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void*) {
-  return margelo::nitro::spritesheets::initialize(vm);
+  return margelo::nitro::rnsprite::initialize(vm);
 }

@@ -7,7 +7,7 @@ import com.facebook.react.module.model.ReactModuleInfoProvider
 import com.facebook.react.uimanager.ViewManager
 import com.margelo.nitro.rnsprite.views.HybridNativeSpriteManager
 
-class SpriteSheetsPackage : TurboReactPackage() {
+class RnspritePackage : TurboReactPackage() {
     override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
         return null
     }
@@ -22,7 +22,7 @@ class SpriteSheetsPackage : TurboReactPackage() {
 
     companion object {
         init {
-            System.loadLibrary("spritesheets")
+            System.loadLibrary("rnsprite")
         }
     }
 }

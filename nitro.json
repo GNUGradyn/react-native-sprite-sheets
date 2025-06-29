@@ -1,11 +1,11 @@
 {
-  "cxxNamespace": ["spritesheets"],
+  "cxxNamespace": ["rnsprite"],
   "ios": {
-    "iosModuleName": "SpriteSheets"
+    "iosModuleName": "rnsprite"
   },
   "android": {
     "androidNamespace": ["rnsprite"],
-    "androidCxxLibName": "spritesheets"
+    "androidCxxLibName": "rnsprite"
   },
   "autolinking": {
     "NativeSprite": {
