@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD 20)
 # 1) Define your shared library with both your adapter and the generated stub
 add_library(${PACKAGE_NAME} SHARED
   src/main/cpp/cpp-adapter.cpp
-  src/main/cpp/rnspriteOnLoad.cpp
 )
 
 # 2) Include the Nitrogen-generated autolinking script
