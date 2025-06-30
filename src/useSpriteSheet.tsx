@@ -24,6 +24,8 @@ interface SpriteComponentProps {
     height?: number
 }
 
+// note to self: this is here instead of index.tsx because we dont actually want to expose NativeSprite to end users of the library
+// However this behaved differently when it was in index.tsx, so maybe put it back just for investigation
 const NativeSprite = getHostComponent<NativeSpriteProps, NativeSpriteMethods>(
     "NativeSprite",
     () => NativeSpriteConfig
