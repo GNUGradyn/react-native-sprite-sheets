@@ -3,7 +3,7 @@
 import React from "react";
 import type { NativeSpriteMethods, NativeSpriteProps } from "./SpriteSheets.nitro";
 import { getHostComponent } from "react-native-nitro-modules";
-import NativeSpriteConfig from "../nitrogen/generated/shared/json/NativeSpriteConfig.json"
+import { _NativeSpriteConfig } from "react-native-sprite-sheets"
 
 export const spriteSheetAssets: Record<string, SpriteSheetAsset> = {
 
@@ -28,7 +28,7 @@ interface SpriteComponentProps {
 // However this behaved differently when it was in index.tsx, so maybe put it back just for investigation
 const NativeSprite = getHostComponent<NativeSpriteProps, NativeSpriteMethods>(
     "NativeSprite",
-    () => NativeSpriteConfig
+    () => _NativeSpriteConfig
 )
 
 const useSpriteSheet = (sheetName: SheetName) => {
