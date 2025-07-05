@@ -16,13 +16,13 @@ class RnspritePackage : TurboReactPackage() {
         return ReactModuleInfoProvider { HashMap() }
     }
 
-  override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<in Nothing, in Nothing>> {
-    return listOf(HybridNativeSpriteManager());
-  }
+    override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<in Nothing, in Nothing>> {
+        return listOf(HybridNativeSpriteManager());
+    }
 
     companion object {
-        init {
-            System.loadLibrary("rnsprite")
-        }
+    init {
+        System.loadLibrary("rnsprite")
     }
+}
 }

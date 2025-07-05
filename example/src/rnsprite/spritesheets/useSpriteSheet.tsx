@@ -4,6 +4,7 @@ import React from "react";
 import type { NativeSpriteMethods, NativeSpriteProps } from "../../../../src/SpriteSheets.nitro";
 import { getHostComponent } from "react-native-nitro-modules";
 import { _NativeSpriteConfig } from "react-native-sprite-sheets"
+import { View, type ViewStyle } from "react-native";
 
 export const spriteSheetAssets: Record<string, SpriteSheetAsset> = {
     twemoji: { image: require("./twemoji.png"), map: require("./twemoji.png.json") }
@@ -19,14 +20,13 @@ interface SpriteSheetAsset {
 }
 
 interface SpriteComponentProps {
-    icon: string,
+    icon: string
     width?: number
     height?: number
+    style?: ViewStyle
 }
 
-// note to self: this is here instead of index.tsx because we dont actually want to expose NativeSprite to end users of the library
-// However this behaved differently when it was in index.tsx, so maybe put it back just for investigation
-const NativeSprite = getHostComponent<NativeSpriteProps, NativeSpriteMethods>(
+export const NativeSprite = getHostComponent<NativeSpriteProps, NativeSpriteMethods>(
     "NativeSprite",
     () => _NativeSpriteConfig
 )
@@ -38,12 +38,12 @@ const useSpriteSheet = (sheetName: SheetName) => {
 
     if (!asset) throw Error("Spritesheet " + sheetName + " could not be located. Try recompiling your spritesheets with `yarn rnsprite:pack`");
 
-    const sprite: React.FC<SpriteComponentProps> = ({ icon, width, height }: SpriteComponentProps) => {
-        const coordinates = asset.map[icon];
+    const sprite: React.FC<SpriteComponentProps> = (props: SpriteComponentProps) => {
+        const coordinates = asset.map[props.icon];
 
-        if (!coordinates) throw new Error("Could not find icon " + icon + " in sheet " + sheetName + ". Try recompiling your spritesheets with `yarn rnsprite:pack`");
+        if (!coordinates) throw new Error("Could not find icon " + props.icon + " in sheet " + sheetName + ". Try recompiling your spritesheets with `yarn rnsprite:pack`");
 
-        return <NativeSprite assetID={asset.image} srcX={coordinates.x} srcY={coordinates.y} srcW={coordinates.width} srcH={coordinates.height} width={width} height={height} />
+        return <NativeSprite assetID={asset.image} srcX={coordinates.x} srcY={coordinates.y} srcW={coordinates.width} srcH={coordinates.height} width={props.width} height={props.height} style={props.style} />
     }
 
     return React.memo(sprite);
