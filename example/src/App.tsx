@@ -15,8 +15,7 @@ const App = () => {
   
   return (
     <SafeAreaView style={styles.container}>
-      <Text>js side test</Text>
-      <TwemojiSprite icon="1f0cf.png" style={{ width: 100, height: 100 }} />
+      <TwemojiSprite icon="1f0cf.png"/>
     </SafeAreaView>
   );
 }
