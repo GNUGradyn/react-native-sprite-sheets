@@ -1,9 +1,8 @@
 import type { HybridView, HybridViewMethods, HybridViewProps } from 'react-native-nitro-modules';
 
 export interface NativeSpriteProps extends HybridViewProps {
-  assetID: number;
-  width?: number;
-  height?: number;
+  assetUri: string;
+  // Width and height required because react native does not get a size from the native side and the we have the dimensions from the map anyway
   srcX: number;
   srcY: number;
   srcW: number;
