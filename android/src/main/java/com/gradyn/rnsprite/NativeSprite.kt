@@ -2,32 +2,38 @@ package com.margelo.nitro.rnsprite
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.util.Log
-import android.widget.ImageView
 import androidx.collection.LruCache
 import com.facebook.react.uimanager.ThemedReactContext
 import okhttp3.Request
 import java.io.IOException
-import android.graphics.Matrix
-import com.gradyn.rnsprite.NativeSpriteView
 import java.io.BufferedInputStream
 
 class NativeSprite(context: ThemedReactContext) : HybridNativeSpriteSpec() {
   override var srcX: Double = 0.0
     set(value) {
+      field = value
       view.srcX = value.toInt()
+      view.invalidate()
     }
   override var srcY: Double = 0.0
     set(value) {
+      field = value
       view.srcY = value.toInt()
+      view.invalidate()
     }
   override var srcW: Double = 0.0
     set(value) {
+      field = value
       view.srcW = value.toInt()
+      view.invalidate()
     }
   override var srcH: Double = 0.0
     set(value) {
+      field = value
       view.srcH = value.toInt()
+      view.invalidate()
     }
 
   override var assetUri: String = ""
@@ -43,7 +49,9 @@ class NativeSprite(context: ThemedReactContext) : HybridNativeSpriteSpec() {
         onError = { e -> Log.e("NativeSprite", "sprite load failed", e) })
     }
 
-  override val view = NativeSpriteView(context)
+  override val view = NativeSpriteView(context).apply {
+    setBackgroundColor(Color.RED) // test
+  }
 
   // TODO: move caching logic to a shared object so items can be evacuated or pre-loaded from the js side
   object SpriteFetcher {

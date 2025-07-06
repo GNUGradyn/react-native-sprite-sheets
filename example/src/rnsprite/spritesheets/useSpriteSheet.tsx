@@ -47,6 +47,8 @@ const useSpriteSheet = (sheetName: SheetName) => {
         if (style.height || style.width) console.warn("Height and width styles are ignored when using sprites. Use the `width` and `height` props instead.");
         const height = props.height || coordinates.height;
         const width = props.width || coordinates.width;
+        style.width = width;
+        style.height = height;
 
         return <NativeSprite assetUri={Image.resolveAssetSource(asset.image).uri} srcX={coordinates.x} srcY={coordinates.y} srcW={coordinates.width} srcH={coordinates.height} style={style} />
     }
