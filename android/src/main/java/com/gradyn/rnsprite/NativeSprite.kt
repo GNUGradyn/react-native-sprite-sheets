@@ -1,90 +1,67 @@
+@file:Suppress("DEPRECATION") // GenericDraweeView is what react native itself is using and
+// Vito doesn't seem to be documented yet so we're using it anyway
+
 package com.margelo.nitro.rnsprite
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.util.Log
-import androidx.collection.LruCache
+import android.graphics.Matrix
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
+import com.facebook.drawee.view.SimpleDraweeView
 import com.facebook.react.uimanager.ThemedReactContext
-import okhttp3.Request
-import java.io.IOException
-import java.io.BufferedInputStream
+import com.gradyn.rnsprite.MatrixScaleType
 
 class NativeSprite(context: ThemedReactContext) : HybridNativeSpriteSpec() {
-  override var srcX: Double = 0.0
+  override var srcX: Double = -1.0
     set(value) {
       field = value
-      view.srcX = value.toInt()
-      view.invalidate()
+      render()
     }
-  override var srcY: Double = 0.0
+  override var srcY: Double = -1.0
     set(value) {
       field = value
-      view.srcY = value.toInt()
-      view.invalidate()
+      render()
     }
-  override var srcW: Double = 0.0
+  override var srcW: Double = -1.0
     set(value) {
       field = value
-      view.srcW = value.toInt()
-      view.invalidate()
+      render()
     }
-  override var srcH: Double = 0.0
+  override var srcH: Double = -1.0
     set(value) {
       field = value
-      view.srcH = value.toInt()
-      view.invalidate()
+      render()
     }
 
   override var assetUri: String = ""
     set(value) {
       field = value
-      SpriteFetcher.load(
-        field,
-        onReady = { bmp ->
-          view.post { // postback onto UI thread
-            view.fullSheet = bmp
-          }
-        },
-        onError = { e -> Log.e("NativeSprite", "sprite load failed", e) })
+      render()
     }
 
-  override val view = NativeSpriteView(context).apply {
-    setBackgroundColor(Color.RED) // test
+  override val view = SimpleDraweeView(context)
+
+  fun render() {
+    // make sure all the data we need has been sent over the bridge
+    if (srcW < 0 || srcY < 0 || srcH < 0 || srcX < 0 || assetUri.isBlank()) return
+
+    // crop
+    view.layoutParams = ViewGroup.LayoutParams(srcW.toInt(), srcH.toInt())
+
+    // shift
+    val matrix = Matrix().apply {
+      setScale(1f, 1f) // dont scale
+      postTranslate(-srcX.toFloat(), -srcY.toFloat())
+    }
+    val hierarchy =
+      GenericDraweeHierarchyBuilder(view.resources)
+        .setActualImageScaleType(MatrixScaleType(matrix))
+        .build()
+    view.hierarchy = hierarchy
+
+    // apply
+    view.setImageURI(assetUri)
+    view.requestLayout()
+    view.invalidate()
   }
-
-  // TODO: move caching logic to a shared object so items can be evacuated or pre-loaded from the js side
-  object SpriteFetcher {
-    private val client = com.facebook.react.modules.network.OkHttpClientProvider
-      .getOkHttpClient()
-
-    private val cache = object : LruCache<String, Bitmap>(50 * 1024 * 1024) {
-      override fun sizeOf(key: String, value: Bitmap) = value.byteCount
-    }
-
-    fun load(uri: String, onReady: (Bitmap) -> Unit, onError: (Exception) -> Unit) {
-      cache.get(uri)?.let { return onReady(it) }
-
-      Thread {
-        try {
-          val resp = client.newCall(Request.Builder().url(uri).build()).execute()
-          resp.body?.use { body ->
-            val input = BufferedInputStream(body.byteStream())
-            val bmp = BitmapFactory.decodeStream(input)
-              ?: throw IOException("Failed to decode sprite sheet")
-            cache.put(uri, bmp)
-            onReady(bmp)
-          }
-        } catch (e: Exception) {
-          onError(e)
-        }
-      }.start()
-    }
-
-    fun unload(uri: String) {
-      cache.remove(uri)
-    }
-  }
-
-
 }
