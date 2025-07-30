@@ -3,15 +3,17 @@
 
 package com.margelo.nitro.rnsprite
 
-import android.graphics.Matrix
-import android.view.ViewGroup
+import android.graphics.Color
 import android.widget.FrameLayout
+import androidx.core.net.toUri
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.drawable.ScalingUtils
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
 import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.facebook.react.uimanager.ThemedReactContext
-import com.gradyn.rnsprite.MatrixScaleType
 
-class NativeSprite(context: ThemedReactContext) : HybridNativeSpriteSpec() {
+class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
   override var srcX: Double = -1.0
     set(value) {
       field = value
@@ -39,29 +41,35 @@ class NativeSprite(context: ThemedReactContext) : HybridNativeSpriteSpec() {
       render()
     }
 
-  override val view = SimpleDraweeView(context)
+  private val draweeView = SimpleDraweeView(context)
 
-  fun render() {
-    // make sure all the data we need has been sent over the bridge
-    if (srcW < 0 || srcY < 0 || srcH < 0 || srcX < 0 || assetUri.isBlank()) return
+  override val view = FrameLayout(context).apply {
+    clipChildren = true
+    setBackgroundColor(Color.RED)
+    addView(draweeView)
+  }
 
-    // crop
-    view.layoutParams = ViewGroup.LayoutParams(srcW.toInt(), srcH.toInt())
+  private fun render() {
+    if (srcW < 0 || srcH < 0 || srcX < 0 || srcY < 0 || assetUri.isBlank()) return
 
-    // shift
-    val matrix = Matrix().apply {
-      setScale(1f, 1f) // dont scale
-      postTranslate(-srcX.toFloat(), -srcY.toFloat())
-    }
-    val hierarchy =
-      GenericDraweeHierarchyBuilder(view.resources)
-        .setActualImageScaleType(MatrixScaleType(matrix))
-        .build()
-    view.hierarchy = hierarchy
+    view.layoutParams = FrameLayout.LayoutParams(srcW.toInt(), srcH.toInt())
 
-    // apply
-    view.setImageURI(assetUri)
-    view.requestLayout()
-    view.invalidate()
+    draweeView.translationX = -srcX.toFloat()
+    draweeView.translationY = -srcY.toFloat()
+
+    draweeView.layoutParams = FrameLayout.LayoutParams(
+      10980, 10980
+    )
+
+    val request = ImageRequestBuilder
+      .newBuilderWithSource(assetUri.toUri())
+      .build()
+
+    val controller = Fresco.newDraweeControllerBuilder()
+      .setImageRequest(request)
+      .setOldController(draweeView.controller)
+      .build()
+
+    draweeView.controller = controller
   }
 }
