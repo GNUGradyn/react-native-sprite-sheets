@@ -4,6 +4,10 @@
 package com.margelo.nitro.rnsprite
 
 import android.graphics.Color
+import android.graphics.Outline
+import android.util.Log
+import android.view.View
+import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
 import androidx.core.net.toUri
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -43,13 +47,28 @@ class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
 
   private val draweeView = SimpleDraweeView(context)
 
-  override val view = FrameLayout(context).apply {
-    clipChildren = true
+  override val view = object : FrameLayout(context) {
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+      super.onLayout(changed, left, top, right, bottom)
+      Log.d("NativeSprite", "onLayout: ${right - left}x${bottom - top}")
+    }
+  }.apply {
+    // We cannot use clipChildren because Fresco draws outside the view system using native APIs.
+    // React Natives fix for this is also in "true native land" via java/C++ hybrid so we cannot emulate that.
+    // clipToOutline is also hardware accelerated so performance should be very close to rn
+    clipToOutline = true
+    outlineProvider = object : ViewOutlineProvider() {
+      override fun getOutline(view: View, outline: Outline) {
+        outline.setRect(0, 0, srcW.toInt(), srcH.toInt())
+      }
+    }
     setBackgroundColor(Color.RED)
     addView(draweeView)
   }
 
+
   private fun render() {
+    // Wait for everything to come over the bridge
     if (srcW < 0 || srcH < 0 || srcX < 0 || srcY < 0 || assetUri.isBlank()) return
 
     view.layoutParams = FrameLayout.LayoutParams(srcW.toInt(), srcH.toInt())
