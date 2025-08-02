@@ -47,12 +47,7 @@ class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
 
   private val draweeView = SimpleDraweeView(context)
 
-  override val view = object : FrameLayout(context) {
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-      super.onLayout(changed, left, top, right, bottom)
-      Log.d("NativeSprite", "onLayout: ${right - left}x${bottom - top}")
-    }
-  }.apply {
+  override val view = FrameLayout(context).apply {
     // We cannot use clipChildren because Fresco draws outside the view system using native APIs.
     // React Natives fix for this is also in "true native land" via java/C++ hybrid so we cannot emulate that.
     // clipToOutline is also hardware accelerated so performance should be very close to rn
@@ -70,8 +65,6 @@ class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
   private fun render() {
     // Wait for everything to come over the bridge
     if (srcW < 0 || srcH < 0 || srcX < 0 || srcY < 0 || assetUri.isBlank()) return
-
-    view.layoutParams = FrameLayout.LayoutParams(srcW.toInt(), srcH.toInt())
 
     draweeView.translationX = -srcX.toFloat()
     draweeView.translationY = -srcY.toFloat()

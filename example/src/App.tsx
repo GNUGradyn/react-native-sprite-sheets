@@ -15,7 +15,7 @@ const App = () => {
   
   return (
     <SafeAreaView style={styles.container}>
-      <TwemojiSprite icon="1f60a.png"/>
+      <TwemojiSprite icon="1f60a.png" />
     </SafeAreaView>
   );
 }
