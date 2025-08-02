@@ -52,13 +52,12 @@ class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
     // React Natives fix for this is also in "true native land" via java/C++ hybrid so we cannot emulate that.
     // clipToOutline is also hardware accelerated so performance should be very close to rn
     clipToOutline = true
-    outlineProvider = object : ViewOutlineProvider() {
-      override fun getOutline(view: View, outline: Outline) {
-        outline.setRect(0, 0, srcW.toInt(), srcH.toInt())
-      }
-    }
+    outlineProvider = BoundsOutlineProvider()
     setBackgroundColor(Color.RED)
     addView(draweeView)
+    addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
+      v.invalidateOutline()
+    }
   }
 
 
@@ -83,5 +82,11 @@ class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
       .build()
 
     draweeView.controller = controller
+  }
+
+  inner class BoundsOutlineProvider : ViewOutlineProvider() {
+    override fun getOutline(view: View, outline: Outline) {
+      outline.setRect(0, 0, view.width, view.height)
+    }
   }
 }
