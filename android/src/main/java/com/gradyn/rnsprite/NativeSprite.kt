@@ -67,10 +67,6 @@ class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
       10980, 10980
     )
 
-    val request = ImageRequestBuilder
-      .newBuilderWithSource(assetUri.toUri())
-      .build()
-
     val controller = Fresco.newDraweeControllerBuilder()
       .setImageRequest(request)
       .setOldController(draweeView.controller)
