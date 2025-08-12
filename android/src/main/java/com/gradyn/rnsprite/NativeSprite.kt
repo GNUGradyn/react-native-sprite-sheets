@@ -5,14 +5,12 @@ package com.margelo.nitro.rnsprite
 
 import android.graphics.Color
 import android.graphics.Outline
-import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
 import androidx.core.net.toUri
 import com.facebook.drawee.backends.pipeline.Fresco
-import com.facebook.drawee.drawable.ScalingUtils
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder
+import com.facebook.react.uimanager.PixelUtil
 import com.facebook.drawee.view.SimpleDraweeView
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.facebook.react.uimanager.ThemedReactContext
@@ -53,7 +51,6 @@ class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
     // clipToOutline is also hardware accelerated so performance should be very close to rn
     clipToOutline = true
     outlineProvider = BoundsOutlineProvider()
-    setBackgroundColor(Color.RED)
     addView(draweeView)
     addOnLayoutChangeListener { v, _, _, _, _, _, _, _, _ ->
       v.invalidateOutline()

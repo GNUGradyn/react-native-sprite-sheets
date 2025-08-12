@@ -48,7 +48,7 @@ const useSpriteSheet = (sheetName: SheetName) => {
         style.width = props.width || coordinates.width;
         style.height = props.height || coordinates.height;
 
-        return <NativeSprite assetUri={Image.resolveAssetSource(asset.image).uri} srcX={coordinates.x} srcY={coordinates.y} srcW={coordinates.width} srcH={coordinates.height} sty/>
+        return <NativeSprite assetUri={Image.resolveAssetSource(asset.image).uri} srcX={coordinates.x} srcY={coordinates.y} srcW={coordinates.width} srcH={coordinates.height} style={style}/>
     }
 
     return React.memo(sprite);

@@ -4,7 +4,7 @@ import React from "react";
 import type { NativeSpriteMethods, NativeSpriteProps } from "../../../../src/SpriteSheets.nitro";
 import { getHostComponent } from "react-native-nitro-modules";
 import { _NativeSpriteConfig } from "react-native-sprite-sheets"
-import { Image, type ViewStyle } from "react-native";
+import { Image, PixelRatio, type ViewStyle } from "react-native";
 
 export const spriteSheetAssets: Record<string, SpriteSheetAsset> = {
     twemoji: { image: require("./twemoji.png"), map: require("./twemoji.png.json") }
@@ -31,6 +31,8 @@ export const NativeSprite = getHostComponent<NativeSpriteProps, NativeSpriteMeth
     () => _NativeSpriteConfig
 )
 
+const toDp = (px: number) => px / PixelRatio.get();
+
 const useSpriteSheet = (sheetName: SheetName) => {
     if (sheetName.endsWith(".png")) sheetName = sheetName.slice(0, -4);
 
@@ -45,8 +47,8 @@ const useSpriteSheet = (sheetName: SheetName) => {
 
         const style = props.style || {};
         if (style.height || style.width) console.warn("Height and width styles are ignored when using sprites. Use the `width` and `height` props instead.");
-        style.width = props.width || coordinates.width;
-        style.height = props.height || coordinates.height;''
+        style.width  = props.width  ?? toDp(coordinates.width);
+        style.height = props.height ?? toDp(coordinates.height);
 
         return <NativeSprite assetUri={Image.resolveAssetSource(asset.image).uri} srcX={coordinates.x} srcY={coordinates.y} srcW={coordinates.width} srcH={coordinates.height} style={style} />
     }
