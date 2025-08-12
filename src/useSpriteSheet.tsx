@@ -1,7 +1,7 @@
 // This will be copied into the sprite sheet build output and modified by ts-morph
 
 import React from "react";
-import type { NativeSpriteMethods, NativeSpriteProps } from "./SpriteSheets.nitro";
+import type { NativeSpriteMethods, NativeSpriteProps } from "./NativeSprite.nitro";
 import { getHostComponent } from "react-native-nitro-modules";
 import { _NativeSpriteConfig } from "react-native-sprite-sheets"
 import { Image, type ViewStyle } from "react-native";

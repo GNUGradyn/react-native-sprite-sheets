@@ -3,14 +3,12 @@
 
 package com.margelo.nitro.rnsprite
 
-import android.graphics.Color
 import android.graphics.Outline
 import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
 import androidx.core.net.toUri
 import com.facebook.drawee.backends.pipeline.Fresco
-import com.facebook.react.uimanager.PixelUtil
 import com.facebook.drawee.view.SimpleDraweeView
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.facebook.react.uimanager.ThemedReactContext
