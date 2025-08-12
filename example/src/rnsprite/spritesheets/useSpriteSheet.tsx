@@ -7,16 +7,21 @@ import { _NativeSpriteConfig } from "react-native-sprite-sheets"
 import { Image, PixelRatio, type ViewStyle } from "react-native";
 
 export const spriteSheetAssets: Record<string, SpriteSheetAsset> = {
-    twemoji: { image: require("./twemoji.png"), map: require("./twemoji.png.json") }
+    twemoji: { image: require("./twemoji.png"), metadata: require("./twemoji.png.json") }
 }
 
-type SpritesmithMap = Record<string, { x: number; y: number; width: number; height: number }>;
+type SpritesheetMap = Record<string, { x: number; y: number; width: number; height: number }>;
+type SpritesheetMetadata = {
+    coordinates: SpritesheetMap;
+    width: number;
+    height: number;
+};
 
 type SheetName = keyof typeof spriteSheetAssets;
 
 interface SpriteSheetAsset {
     image: number
-    map: SpritesmithMap
+    metadata: SpritesheetMetadata
 }
 
 interface SpriteComponentProps {
@@ -26,12 +31,12 @@ interface SpriteComponentProps {
     style?: ViewStyle
 }
 
+const toDp = (px: number) => px / PixelRatio.get();
+
 export const NativeSprite = getHostComponent<NativeSpriteProps, NativeSpriteMethods>(
     "NativeSprite",
     () => _NativeSpriteConfig
 )
-
-const toDp = (px: number) => px / PixelRatio.get();
 
 const useSpriteSheet = (sheetName: SheetName) => {
     if (sheetName.endsWith(".png")) sheetName = sheetName.slice(0, -4);
@@ -42,15 +47,15 @@ const useSpriteSheet = (sheetName: SheetName) => {
 
 
     const sprite: React.FC<SpriteComponentProps> = (props: SpriteComponentProps) => {
-        const coordinates = asset.map[props.icon];
+        const coordinates = asset.metadata.coordinates[props.icon];
         if (!coordinates) throw new Error("Could not find icon " + props.icon + " in sheet " + sheetName + ". Try recompiling your spritesheets with `yarn rnsprite:pack`");
 
         const style = props.style || {};
         if (style.height || style.width) console.warn("Height and width styles are ignored when using sprites. Use the `width` and `height` props instead.");
-        style.width  = props.width  ?? toDp(coordinates.width);
-        style.height = props.height ?? toDp(coordinates.height);
+        style.width = toDp(props.width  ?? coordinates.width);
+        style.height = toDp(props.height || coordinates.height);
 
-        return <NativeSprite assetUri={Image.resolveAssetSource(asset.image).uri} srcX={coordinates.x} srcY={coordinates.y} srcW={coordinates.width} srcH={coordinates.height} style={style} />
+        return <NativeSprite assetUri={Image.resolveAssetSource(asset.image).uri} srcX={coordinates.x} srcY={coordinates.y} srcW={coordinates.width} srcH={coordinates.height} style={style}/>
     }
 
     return React.memo(sprite);

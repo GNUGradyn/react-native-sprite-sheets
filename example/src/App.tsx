@@ -1,4 +1,4 @@
-import { StyleSheet, SafeAreaView, Text, Image, View } from 'react-native';
+import { StyleSheet, SafeAreaView } from 'react-native';
 import useSpriteSheet from './rnsprite/spritesheets/useSpriteSheet';
 
 const styles = StyleSheet.create({

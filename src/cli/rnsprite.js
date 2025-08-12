@@ -103,7 +103,14 @@ Instead, modify the sprite inputs and rerun your rnsprite:pack script as documen
             Object.entries(result.coordinates)
                 .map(([k, v]) => [path.basename(k), v])
         );
-        fs.writeFileSync(spriteSheetImgOutputPath + ".json", JSON.stringify(coordinates), 'utf8');
+
+        const metadata = {
+            coordinates: coordinates,
+            width: result.properties.width,
+            height: result.properties.height,
+        }
+
+        fs.writeFileSync(spriteSheetImgOutputPath + ".json", JSON.stringify(metadata), 'utf8');
     }
 
     console.log("Generating hook source code");
