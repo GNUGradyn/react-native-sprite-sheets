@@ -1,10 +1,10 @@
 // This will be copied into the sprite sheet build output and modified by ts-morph
 
-import React, { useEffect, useMemo } from "react";
+import React, { useLayoutEffect, useMemo } from "react";
 import type { NativeSpriteMethods, NativeSpriteProps } from "./NativeSprite.nitro";
 import { getHostComponent, NitroModules } from "react-native-nitro-modules";
 import { _NativeSpriteConfig } from "react-native-sprite-sheets";
-import { Image, PixelRatio, StyleSheet, type ViewStyle } from "react-native";
+import { Image, PixelRatio, StyleSheet, View, type ViewStyle } from "react-native";
 import type { SpriteCache } from "./SpriteCache.nitro";
 
 export const spriteSheetAssets: Record<string, SpriteSheetAsset> = {};
@@ -41,6 +41,8 @@ const toDp = (px: number) => px / PixelRatio.get();
 const makeToken = () => Math.random().toString(36).slice(2);
 
 const useSpriteSheet = (sheetName: SheetName) => {
+  const [ready, setReady] = React.useState(false);
+
   if (sheetName.endsWith(".png")) sheetName = sheetName.slice(0, -4);
   const asset = spriteSheetAssets[sheetName];
   if (!asset) {
@@ -62,10 +64,10 @@ const useSpriteSheet = (sheetName: SheetName) => {
     // Each instance gets a stable token
     const token = useMemo(makeToken, []);
 
-    // Pin on mount; release on unmount
-    useEffect(() => {
+    // Pin on mount; release on unmount. useLayoutEffect is used to ensure this runs before the first render to start the cache as early as possible
+    useLayoutEffect(() => {
       // fire-and-forget; native is idempotent per token
-      Cache.pin(sheetUri, token).catch(() => {});
+      Cache.pin(sheetUri, token).then(() => setReady(true));
       return () => {
         Cache.release(sheetUri, token);
       };
@@ -83,6 +85,7 @@ const useSpriteSheet = (sheetName: SheetName) => {
     const style: ViewStyle = { ...base, width: widthDp, height: heightDp };
 
     return (
+      ready ? (      
       <NativeSprite
         assetUri={sheetUri}
         srcX={coords.x}
@@ -90,7 +93,8 @@ const useSpriteSheet = (sheetName: SheetName) => {
         srcW={coords.width}
         srcH={coords.height}
         style={style}
-      />
+      />) : 
+      <View style={style}/>
     );
   };
 
