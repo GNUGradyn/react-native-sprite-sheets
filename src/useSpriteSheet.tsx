@@ -1,6 +1,6 @@
 // This will be copied into the sprite sheet build output and modified by ts-morph
 
-import React, { useLayoutEffect, useMemo } from "react";
+import React, { useLayoutEffect, useMemo, useState } from "react";
 import type { NativeSpriteMethods, NativeSpriteProps } from "./NativeSprite.nitro";
 import { getHostComponent, NitroModules } from "react-native-nitro-modules";
 import { _NativeSpriteConfig } from "react-native-sprite-sheets";
@@ -42,7 +42,7 @@ const makeToken = () => Math.random().toString(36).slice(2);
 
 const useSpriteSheet = (sheetName: SheetName) => {
   const [ready, setReady] = React.useState(false);
-
+  const [readyUri, setReadyUri] = useState<string | null>(null);
   if (sheetName.endsWith(".png")) sheetName = sheetName.slice(0, -4);
   const asset = spriteSheetAssets[sheetName];
   if (!asset) {
@@ -52,6 +52,12 @@ const useSpriteSheet = (sheetName: SheetName) => {
   }
 
   const sheetUri = Image.resolveAssetSource(asset.image).uri;
+  
+  if (readyUri && readyUri !== sheetUri) {
+    // If the URI changes, we need to reset the cache
+    Cache.release(readyUri, makeToken());
+    setReady(false);
+  }
 
   const Sprite: React.FC<SpriteComponentProps> = (props) => {
     const coords = asset.metadata.coordinates[props.icon];
