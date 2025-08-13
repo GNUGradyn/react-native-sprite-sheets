@@ -11,6 +11,10 @@
     "NativeSprite": {
       "kotlin": "NativeSprite",
       "swift": "NativeSprite" 
+    },
+    "SpriteCache": {
+      "kotlin": "SpriteCache",
+      "swift": "SpriteCache"
     }
   },
   "ignorePaths": ["node_modules"]

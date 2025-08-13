@@ -7,11 +7,16 @@ import android.graphics.Outline
 import android.view.View
 import android.view.ViewOutlineProvider
 import android.widget.FrameLayout
-import androidx.core.net.toUri
+import com.facebook.common.internal.Supplier
+import com.facebook.common.references.CloseableReference
+import com.facebook.datasource.DataSource
+import com.facebook.datasource.DataSources
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.SimpleDraweeView
-import com.facebook.imagepipeline.request.ImageRequestBuilder
+import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.react.uimanager.ThemedReactContext
+import java.net.URI
+
 
 class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
   override var srcX: Double = -1.0
@@ -55,6 +60,19 @@ class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
     }
   }
 
+  private fun setImageFromPinned(assetUri: String) {
+    val ref = SpriteCache.fetch(URI(assetUri))
+
+    val supplier: Supplier<DataSource<CloseableReference<CloseableImage>>> =
+      Supplier { DataSources.immediateDataSource(ref) }
+
+    val controller = Fresco.newDraweeControllerBuilder()
+      .setOldController(draweeView.controller)
+      .setDataSourceSupplier(supplier)
+      .build()
+
+    draweeView.controller = controller
+  }
 
   private fun render() {
     // Wait for everything to come over the bridge
@@ -67,12 +85,13 @@ class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
       10980, 10980
     )
 
-    val controller = Fresco.newDraweeControllerBuilder()
-      .setImageRequest(request)
-      .setOldController(draweeView.controller)
-      .build()
-
-    draweeView.controller = controller
+    try {
+      setImageFromPinned(assetUri)
+    } catch (e: IllegalStateException) {
+      // Fail-hard in dev; fail-soft in release
+      if (BuildConfig.DEBUG) throw e
+      draweeView.controller = null // refuse to render if not pinned
+    }
   }
 
   inner class BoundsOutlineProvider : ViewOutlineProvider() {

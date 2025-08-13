@@ -1,4 +1,4 @@
-package com.gradyn.rnsprite
+package com.margelo.nitro.rnsprite
 
 import android.util.Log
 import androidx.core.net.toUri
@@ -10,10 +10,9 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.margelo.nitro.core.Promise
-import com.margelo.nitro.rnsprite.HybridSpriteCacheSpec
 import java.net.URI
 
-class SpriteCache() : HybridSpriteCacheSpec() {
+object SpriteCache : HybridSpriteCacheSpec() {
   private data class Entry(
     val tokens: MutableSet<String> = hashSetOf(),
     var img: CloseableReference<CloseableImage>? = null

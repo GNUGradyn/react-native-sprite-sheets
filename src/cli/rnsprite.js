@@ -122,7 +122,7 @@ Instead, modify the sprite inputs and rerun your rnsprite:pack script as documen
     Object.keys(jobs).forEach(jobKey =>
         assetsVarObjLit.addPropertyAssignment({
             name: jobKey.slice(0, -4), // Remove .png suffix
-            initializer: `{ image: require("./${jobKey}"), map: require("./${jobKey}.json") }`
+            initializer: `{ image: require("./${jobKey}"), metadata: require("./${jobKey}.json") }`
         })
     );
     const hookOutput = hookSource.copy(path.join(path.resolve(out), "useSpriteSheet.tsx"));
