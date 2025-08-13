@@ -1,23 +1,15 @@
-import { StyleSheet, SafeAreaView } from 'react-native';
-import useSpriteSheet from './rnsprite/spritesheets/useSpriteSheet';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStaticNavigation } from '@react-navigation/native';
+import HomeScreen from './screens/HomeScreen';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+const RootStack = createNativeStackNavigator({
+  screens: {
+    Home: HomeScreen,
   },
 });
 
+const Navigation = createStaticNavigation(RootStack);
 
-const App = () => {
-  const TwemojiSprite = useSpriteSheet('twemoji');
-  
-  return (
-    <SafeAreaView style={styles.container}>
-      <TwemojiSprite icon="1f60a.png"/>
-  </SafeAreaView>
-  );
-}
+const App = () => <Navigation />;
 
 export default App;

@@ -15,13 +15,15 @@ import java.net.URI
 object SpriteCache : HybridSpriteCacheSpec() {
   private data class Entry(
     val tokens: MutableSet<String> = hashSetOf(),
-    var img: CloseableReference<CloseableImage>? = null
+    var img: CloseableReference<CloseableImage>? = null,
+    var width: Int = -1,
+    var height: Int = -1
   )
 
   private val map = HashMap<String, Entry>()
   private val lock = Any()
 
-  override fun pin(uri: String, token: String): Promise<Unit> {
+  override fun pin(uri: String, token: String, height: Double, width: Double): Promise<Unit> {
     val promise = Promise<Unit>()
 
     var noop = false
@@ -56,6 +58,8 @@ object SpriteCache : HybridSpriteCacheSpec() {
           if (src.isFinished) {
             synchronized(lock) {
               map[uri]?.img = CloseableReference.cloneOrNull(src.result)
+              map[uri]?.height = height.toInt()
+              map[uri]?.width = width.toInt()
               promise.resolve(Unit)
             }
           }
@@ -91,12 +95,13 @@ object SpriteCache : HybridSpriteCacheSpec() {
     }
   }
 
-  fun fetch(uri: URI): CloseableReference<CloseableImage> {
+  fun fetch(uri: URI): CachedBitmap {
     synchronized(lock) {
       val e = map[uri.toString()] ?: throw IllegalStateException("Not cached: $uri")
       val pinned = e.img ?: throw IllegalStateException("Not cached: $uri")
-      return CloseableReference.cloneOrNull(pinned)
+      var closableRef = CloseableReference.cloneOrNull(pinned)
         ?: throw IllegalStateException("Clone failed for $uri")
+      return CachedBitmap(closableRef, e.width, e.height)
     }
   }
 }

@@ -63,8 +63,12 @@ class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
   private fun setImageFromPinned(assetUri: String) {
     val ref = SpriteCache.fetch(URI(assetUri))
 
+    draweeView.layoutParams = FrameLayout.LayoutParams(
+      ref.width, ref.height
+    )
+
     val supplier: Supplier<DataSource<CloseableReference<CloseableImage>>> =
-      Supplier { DataSources.immediateDataSource(ref) }
+      Supplier { DataSources.immediateDataSource(ref.img) }
 
     val controller = Fresco.newDraweeControllerBuilder()
       .setOldController(draweeView.controller)
@@ -80,10 +84,6 @@ class NativeSprite(val context: ThemedReactContext) : HybridNativeSpriteSpec() {
 
     draweeView.translationX = -srcX.toFloat()
     draweeView.translationY = -srcY.toFloat()
-
-    draweeView.layoutParams = FrameLayout.LayoutParams(
-      10980, 10980
-    )
 
     try {
       setImageFromPinned(assetUri)

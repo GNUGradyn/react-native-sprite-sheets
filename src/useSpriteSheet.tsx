@@ -73,7 +73,7 @@ const useSpriteSheet = (sheetName: SheetName) => {
     // Pin on mount; release on unmount. useLayoutEffect is used to ensure this runs before the first render to start the cache as early as possible
     useLayoutEffect(() => {
       // fire-and-forget; native is idempotent per token
-      Cache.pin(sheetUri, token).then(() => setReady(true));
+      Cache.pin(sheetUri, token, asset.metadata.height, asset.metadata.width).then(() => setReady(true));
       return () => {
         Cache.release(sheetUri, token);
       };
